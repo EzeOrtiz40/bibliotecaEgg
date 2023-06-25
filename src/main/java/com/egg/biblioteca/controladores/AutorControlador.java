@@ -1,6 +1,8 @@
 package com.egg.biblioteca.controladores;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -9,7 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.egg.biblioteca.entidades.Autor;
 import com.egg.biblioteca.excepciones.MiException;
 import com.egg.biblioteca.servicio.AutorServicio;
 
@@ -28,19 +32,27 @@ public class AutorControlador {
     }
 
     @PostMapping("/registro")
-    public String registro(@RequestParam String nombre, ModelMap modelo){
+    public String registro(@RequestParam String nombre, ModelMap modelo, RedirectAttributes redirectAttributes){
         try{
             autorServicio.crearAutor(nombre);
-            modelo.put("exito", "Subido correctamente");
-
+            modelo.put("exito", "Se cargo correctamente");
+            redirectAttributes.addFlashAttribute("exito", "Subido correctamente");
+            return "redirect:/";
         }catch(MiException ex){
 
             modelo.put("error", ex.getMessage());
-            System.out.println("Entro al catch");  
+            
             return "Autor-Form";
         
         }
-       return "Autor-Form";
+       
+    }
+
+    @GetMapping("/lista")
+    public String listar(ModelMap modelo){
+        List<Autor> autores = autorServicio.listarAutor();
+        modelo.addAttribute("autores", autores);
+        return "autor_lista";
     }
 
     

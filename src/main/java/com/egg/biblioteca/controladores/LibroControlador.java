@@ -1,5 +1,7 @@
 package com.egg.biblioteca.controladores;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -8,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.egg.biblioteca.entidades.Autor;
+import com.egg.biblioteca.entidades.Editorial;
 import com.egg.biblioteca.servicio.AutorServicio;
 import com.egg.biblioteca.servicio.EditorialServicio;
 import com.egg.biblioteca.servicio.LibroServicio;
@@ -23,7 +27,13 @@ public class LibroControlador {
     private EditorialServicio editorialServicio;
 
     @GetMapping("/registrar")
-    public String registrar(){
+    public String registrar(ModelMap modelo){
+
+        List<Autor> autores = autorServicio.listarAutor();
+        List<Editorial> editoriales = editorialServicio.listarEditorial();
+        modelo.addAttribute("autores", autores);
+        modelo.addAttribute("editoriales", editoriales);
+
         return "libro_form";
     }
 
@@ -33,14 +43,20 @@ public class LibroControlador {
                     try {
                         
                         libroServicio.crearLibro(isbn, titulo, ejemplares,idAutor, idEditorial);
-
                         modelo.put("exito", "El libro fue cargado correctamente");
                         System.out.println("Entro al try");
+                        return "index"; 
                     } catch (Exception e) {
+                        List<Autor> autores = autorServicio.listarAutor();
+                        List<Editorial> editoriales = editorialServicio.listarEditorial();
+                        modelo.addAttribute("autores", autores);
+                        modelo.addAttribute("editoriales", editoriales);
                         modelo.put("error", e.getMessage());
-                        System.out.println("Entro al catch");
+                        
                         return "libro_form";
                     } 
-            return "index"; 
+            
     }
+
+
 }

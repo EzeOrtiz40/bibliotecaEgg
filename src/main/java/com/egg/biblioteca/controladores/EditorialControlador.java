@@ -36,4 +36,6 @@ public class EditorialControlador {
         return "editorial_form";
 
     }
+
+    
 }
