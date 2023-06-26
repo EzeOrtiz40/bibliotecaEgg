@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -55,6 +56,22 @@ public class AutorControlador {
         return "autor_lista";
     }
 
-    
+    @GetMapping("/modificar/{idAutor}")
+    public String modificar(@PathVariable String idAutor, ModelMap modelo){
+        modelo.put("autor", autorServicio.getOne(idAutor));
+        return "autor_modificar";
+    }
+
+    @PostMapping("/modificar/{id}")
+    public String modoficar(@PathVariable String id, String nombre, ModelMap modelo){
+        try {
+            autorServicio.modificarAutor(id, nombre);
+            return "redirect:../lista";
+
+        } catch (Exception e) {
+            modelo.put("error", e.getMessage());
+            return "autor_modificar";
+        }
+    }
 
 }
